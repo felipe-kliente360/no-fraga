@@ -124,11 +124,11 @@
             </div>
           </div>
           <div class="form-group mb-8">
-            <div class="form-label">Tipo</div>
-            <div class="chip-group" id="hist-type-chips">
+            <div class="form-label">Status</div>
+            <div class="chip-group" id="hist-status-chips">
               <button class="chip active" data-val="">Todos</button>
-              <button class="chip" data-val="income">Receita</button>
-              <button class="chip" data-val="expense">Despesa</button>
+              <button class="chip" data-val="realizado">Realizado</button>
+              <button class="chip" data-val="provisao">Provisão</button>
             </div>
           </div>
           <button id="hist-apply" class="btn btn-primary" style="height:44px;font-size:14px">Aplicar</button>
@@ -151,6 +151,18 @@
 
       <!-- AJUSTES -->
       <section id="tab-ajustes" class="tab-pane">
+        <div class="list-group">
+          <div class="list-group-header">Orçamento</div>
+          <div class="list-group-body">
+            <div class="list-item" style="gap:12px">
+              <span class="list-item-label">Mensal</span>
+              <div style="display:flex;align-items:center;gap:6px;flex:1;justify-content:flex-end">
+                <span style="font-size:14px;color:var(--text-2)">R$</span>
+                <input id="ajustes-budget" class="input" type="number" min="0" step="100" style="width:120px;text-align:right;padding:6px 10px;font-size:15px;font-weight:600">
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="list-group">
           <div class="list-group-header">Aparência</div>
           <div class="list-group-body">
@@ -214,13 +226,12 @@
     <div id="fca-overlay" class="hidden">
       <div id="fca-sheet">
         <div class="fca-handle"></div>
-        <div class="fca-type-toggle">
-          <button class="fca-type-btn" id="fca-income-btn">Receita</button>
-          <button class="fca-type-btn active-expense" id="fca-expense-btn">Despesa</button>
-        </div>
         <div class="fca-amount-wrap">
           <div class="fca-amount-label">Valor</div>
           <input id="fca-amount" type="text" inputmode="decimal" placeholder="R$ 0,00" autocomplete="off">
+        </div>
+        <div style="text-align:center;margin-bottom:20px">
+          <button class="chip" id="fca-provisao-btn">Provisão</button>
         </div>
         <div class="row mb-16" style="gap:10px">
           <div style="flex:1">

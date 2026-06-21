@@ -26,3 +26,21 @@ create index if not exists idx_tx_type on transactions(type);
 create index if not exists idx_tx_person on transactions(person);
 create index if not exists idx_tx_category on transactions(category);
 create index if not exists idx_tx_group on transactions(installment_group_id);
+create index if not exists idx_tx_status on transactions(status);
+
+-- Migration: provisão support and budget settings
+alter table transactions
+  add column if not exists status text not null default 'realizado'
+  check (status in ('realizado', 'provisao'));
+
+create table if not exists settings (
+  key text primary key,
+  value text not null,
+  updated_at timestamptz default now()
+);
+alter table settings enable row level security;
+create policy "authenticated_settings" on settings
+  for all using (auth.role() = 'authenticated');
+
+insert into settings (key, value) values ('monthly_budget', '25000')
+  on conflict (key) do nothing;

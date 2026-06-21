@@ -5,7 +5,7 @@ let txData = [];
 let sortCol = 'date';
 let sortDir = 'desc';
 let filterPerson = '';
-let filterType = '';
+let filterStatus = '';
 let filterFrom = '';
 let filterTo = '';
 
@@ -25,13 +25,13 @@ export function initHistorico() {
     btn.classList.add('active');
     filterPerson = btn.dataset.val;
   });
-  // type chips
-  document.getElementById('hist-type-chips').addEventListener('click', e => {
+  // status chips
+  document.getElementById('hist-status-chips').addEventListener('click', e => {
     const btn = e.target.closest('[data-val]');
     if (!btn) return;
-    document.querySelectorAll('#hist-type-chips .chip').forEach(c=>c.classList.remove('active'));
+    document.querySelectorAll('#hist-status-chips .chip').forEach(c=>c.classList.remove('active'));
     btn.classList.add('active');
-    filterType = btn.dataset.val;
+    filterStatus = btn.dataset.val;
   });
   document.getElementById('hist-apply').onclick = loadHistorico;
 
@@ -53,7 +53,7 @@ export async function loadHistorico() {
   const start = filterFrom ? filterFrom + '-01' : undefined;
   const end = filterTo ? (() => { const [y,m] = filterTo.split('-'); return new Date(+y,+m,0).toISOString().slice(0,10); })() : undefined;
   try {
-    txData = await getTx({ start, end, person: filterPerson||undefined, type: filterType||undefined });
+    txData = await getTx({ start, end, person: filterPerson||undefined, status: filterStatus||undefined });
     renderTable();
   } catch(e) { showToast('Erro ao carregar histórico','error'); }
 }
@@ -78,11 +78,11 @@ function renderTable() {
   empty.classList.add('hidden');
 
   tbody.innerHTML = sorted.map(r => `
-    <tr data-id="${r.id}" data-group="${r.installment_group_id||''}" data-date="${r.date}" class="tx-row">
+    <tr data-id="${r.id}" data-group="${r.installment_group_id||''}" data-date="${r.date}" class="tx-row${r.status==='provisao'?' tx-provisao':''}">
       <td>${formatDate(r.date)}</td>
-      <td><span class="tx-desc">${r.description||r.category||'—'}</span>${r.installment_total?`<span class="inst-badge">${r.installment_current}/${r.installment_total}</span>`:''}</td>
+      <td><span class="tx-desc">${r.description||r.category||'—'}</span>${r.installment_total?`<span class="inst-badge">${r.installment_current}/${r.installment_total}</span>`:''}${r.status==='provisao'?'<span class="provisao-badge">Prov</span>':''}</td>
       <td><span class="person-pill">${r.person}</span></td>
-      <td style="text-align:right"><span class="tx-amount ${r.type}">${r.type==='income'?'+':'-'}${formatBRL(r.amount)}</span></td>
+      <td style="text-align:right"><span class="tx-amount expense">-${formatBRL(r.amount)}</span></td>
     </tr>
     <tr class="delete-action-row" data-for="${r.id}" style="display:none">
       <td colspan="4">

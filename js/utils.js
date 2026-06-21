@@ -42,9 +42,9 @@ export function showToast(msg, type = 'success') {
   setTimeout(() => { t.className = 'toast'; }, 3000);
 }
 export function exportCSV(rows, filename) {
-  const headers = ['Data','Tipo','Valor','Categoria','Pessoa','Descrição','Pagamento','Parcela'];
+  const headers = ['Data','Status','Valor','Categoria','Pessoa','Descrição','Pagamento','Parcela'];
   const lines = [headers.join(','), ...rows.map(r => [
-    r.date, r.type, r.amount, r.category || '', r.person,
+    r.date, r.status || 'realizado', r.amount, r.category || '', r.person,
     `"${(r.description||'').replace(/"/g,'""')}"`,
     r.payment_method || '',
     r.installment_total ? `${r.installment_current}/${r.installment_total}` : ''

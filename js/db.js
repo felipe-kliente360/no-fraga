@@ -1,12 +1,12 @@
-let sb; // supabase client, set via init()
+let sb;
 export function init(client) { sb = client; }
 
-export async function getTx({ start, end, person, type } = {}) {
-  let q = sb.from('transactions').select('*').order('date', { ascending: false });
+export async function getTx({ start, end, person, status } = {}) {
+  let q = sb.from('transactions').select('*').eq('type', 'expense').order('date', { ascending: false });
   if (start) q = q.gte('date', start);
   if (end) q = q.lte('date', end);
   if (person) q = q.eq('person', person);
-  if (type) q = q.eq('type', type);
+  if (status) q = q.eq('status', status);
   const { data, error } = await q;
   if (error) throw error;
   return data;
@@ -36,28 +36,50 @@ export async function deleteGroup(groupId, fromDate) {
   if (error) throw error;
 }
 
+export async function getBudget() {
+  try {
+    const { data } = await sb.from('settings').select('value').eq('key', 'monthly_budget').single();
+    return data ? parseFloat(data.value) : 25000;
+  } catch { return 25000; }
+}
+
+export async function setBudget(value) {
+  const { error } = await sb.from('settings').upsert({
+    key: 'monthly_budget',
+    value: String(value),
+    updated_at: new Date().toISOString()
+  });
+  if (error) throw error;
+}
+
 export async function getMonthlyTotals(months) {
-  // months: array of {year, month}
   const { getMonthRange } = await import('./utils.js');
   const results = [];
   for (const { year, month } of months) {
     const { start, end } = getMonthRange(year, month);
-    const { data } = await sb.from('transactions').select('type, amount').gte('date', start).lte('date', end);
-    const income = (data||[]).filter(r=>r.type==='income').reduce((s,r)=>s+Number(r.amount),0);
-    const expense = (data||[]).filter(r=>r.type==='expense').reduce((s,r)=>s+Number(r.amount),0);
-    results.push({ year, month, income, expense });
+    const { data } = await sb.from('transactions')
+      .select('status, amount')
+      .eq('type', 'expense')
+      .gte('date', start)
+      .lte('date', end);
+    const rows = data || [];
+    const realizado = rows.filter(r => r.status !== 'provisao').reduce((s, r) => s + Number(r.amount), 0);
+    const provisao = rows.filter(r => r.status === 'provisao').reduce((s, r) => s + Number(r.amount), 0);
+    results.push({ year, month, realizado, provisao, expense: realizado + provisao });
   }
   return results;
 }
 
-export async function getGrouped(start, end, dimension, type = 'expense') {
-  let q = sb.from('transactions').select('*').gte('date', start).lte('date', end);
-  if (type) q = q.eq('type', type);
-  const { data } = await q;
+export async function getGrouped(start, end, dimension) {
+  const { data } = await sb.from('transactions')
+    .select('*')
+    .eq('type', 'expense')
+    .gte('date', start)
+    .lte('date', end);
   const rows = data || [];
   const map = {};
   for (const r of rows) {
-    const key = dimension === 'month' ? r.date.slice(0,7) :
+    const key = dimension === 'month' ? r.date.slice(0, 7) :
                 dimension === 'category' ? (r.category || 'Sem categoria') :
                 dimension === 'person' ? r.person :
                 r.payment_method || 'Outro';

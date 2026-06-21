@@ -17,7 +17,7 @@ export async function loadAnalise() {
     map = {};
     totals.forEach(t => { map[`${t.year}-${String(t.month).padStart(2,'0')}`] = { sum: t.expense, count: 0, avg: 0 }; });
   } else {
-    const raw = await getGrouped(start, end, dim, 'expense');
+    const raw = await getGrouped(start, end, dim);
     map = Object.fromEntries(Object.entries(raw).map(([k,v])=>[k,{sum:v.sum,count:v.count,avg:v.count?v.sum/v.count:0}]));
   }
 

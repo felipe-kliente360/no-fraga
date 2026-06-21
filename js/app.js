@@ -73,14 +73,14 @@ function loginScreen() {
   document.getElementById('setup-reset').addEventListener('click', () => { clearConfig(); setupScreen(); });
 }
 
-function appScreen() {
+async function appScreen() {
   show('screen-app');
   initDb(sbClient);
   initFCA();
   initDashboard();
   initAnalise();
   initHistorico();
-  initAjustes(sbClient);
+  await initAjustes(sbClient);
   setupTabs();
   lucide.createIcons();
   loadDashboard();

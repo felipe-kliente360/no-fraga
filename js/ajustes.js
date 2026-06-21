@@ -1,15 +1,15 @@
 import { showToast, exportCSV } from './utils.js';
-import { getTx } from './db.js';
+import { getTx, getBudget, setBudget } from './db.js';
 import { clearConfig } from './config.js';
 
 const THEME_KEY = 'gastinhos_theme';
 
-export function initAjustes(supabase) {
+export async function initAjustes(supabase) {
   // theme
   const saved = localStorage.getItem(THEME_KEY) || 'auto';
   applyTheme(saved);
   document.querySelectorAll('.seg-btn[data-theme-val]').forEach(btn => {
-    if (btn.dataset.themeVal === saved) btn.classList.add('active');
+    btn.classList.toggle('active', btn.dataset.themeVal === saved);
     btn.addEventListener('click', () => {
       document.querySelectorAll('.seg-btn[data-theme-val]').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
@@ -19,10 +19,28 @@ export function initAjustes(supabase) {
   });
 
   // email
-  supabase.auth.getUser().then(({data})=>{
+  supabase.auth.getUser().then(({data}) => {
     const el = document.getElementById('ajustes-email');
     if (el && data?.user?.email) el.textContent = data.user.email;
   });
+
+  // budget
+  const budgetInput = document.getElementById('ajustes-budget');
+  if (budgetInput) {
+    const current = await getBudget();
+    budgetInput.value = current;
+    let saveTimer;
+    budgetInput.addEventListener('input', () => {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(async () => {
+        const val = parseFloat(budgetInput.value);
+        if (val > 0) {
+          await setBudget(val);
+          showToast('Orçamento salvo');
+        }
+      }, 800);
+    });
+  }
 
   // logout
   document.getElementById('ajustes-logout').addEventListener('click', async () => {
@@ -47,8 +65,7 @@ export function initAjustes(supabase) {
 export function applyTheme(val) {
   const html = document.documentElement;
   if (val === 'auto') {
-    const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    html.setAttribute('data-theme', dark ? 'dark' : 'light');
+    html.setAttribute('data-theme', window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   } else {
     html.setAttribute('data-theme', val);
   }
