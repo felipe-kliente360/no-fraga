@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="theme-color" content="#F2F2F7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <title>Gastinhos</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+</head>
+<body>
+<div id="app">
+
+  <!-- SETUP SCREEN -->
+  <div id="screen-setup" class="screen hidden">
+    <div class="auth-screen">
+      <div>
+        <div class="auth-logo">Gastinhos</div>
+        <div class="auth-sub">Configure sua conexão com o Supabase para começar.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Supabase URL</label>
+        <input id="setup-url" class="input" type="url" placeholder="https://xxxx.supabase.co" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Supabase Anon Key</label>
+        <input id="setup-key" class="input" type="text" placeholder="eyJ..." autocomplete="off">
+      </div>
+      <div id="setup-error" class="auth-error"></div>
+      <button id="setup-submit" class="btn btn-primary">Conectar</button>
+    </div>
+  </div>
+
+  <!-- LOGIN SCREEN -->
+  <div id="screen-login" class="screen hidden">
+    <div class="auth-screen">
+      <div>
+        <div class="auth-logo">Gastinhos</div>
+        <div class="auth-sub">Felipe &amp; Teresa</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">E-mail</label>
+        <input id="login-email" class="input" type="email" inputmode="email" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Senha</label>
+        <input id="login-password" class="input" type="password" autocomplete="current-password">
+      </div>
+      <div id="login-error" class="auth-error"></div>
+      <button id="login-submit" class="btn btn-primary">Entrar</button>
+      <button id="setup-reset" class="btn btn-ghost" style="margin-top:8px">Reconfigurar Supabase</button>
+    </div>
+  </div>
+
+  <!-- MAIN APP -->
+  <div id="screen-app" class="screen hidden">
+
+    <header id="app-header">
+      <span id="header-title">Dashboard</span>
+      <div id="header-controls"></div>
+    </header>
+
+    <main id="tab-content">
+
+      <!-- DASHBOARD -->
+      <section id="tab-dashboard" class="tab-pane active">
+        <div id="dash-kpis" class="kpi-grid"></div>
+        <div id="dash-charts"></div>
+      </section>
+
+      <!-- ANÁLISE -->
+      <section id="tab-analise" class="tab-pane">
+        <div class="analise-controls">
+          <select id="an-dimension" class="analise-select">
+            <option value="category">Categoria</option>
+            <option value="person">Pessoa</option>
+            <option value="month">Mês</option>
+            <option value="payment_method">Pagamento</option>
+          </select>
+          <select id="an-metric" class="analise-select">
+            <option value="sum">Total R$</option>
+            <option value="count">Nº Transações</option>
+            <option value="avg">Média R$</option>
+          </select>
+          <select id="an-period" class="analise-select">
+            <option value="3">3 meses</option>
+            <option value="6" selected>6 meses</option>
+            <option value="12">12 meses</option>
+          </select>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-canvas-wrap" style="height:220px">
+            <canvas id="an-chart"></canvas>
+          </div>
+        </div>
+        <div class="chart-wrap mt-16">
+          <table class="analise-table" id="an-table"></table>
+        </div>
+      </section>
+
+      <!-- HISTÓRICO -->
+      <section id="tab-historico" class="tab-pane">
+        <div id="hist-filter-bar" class="hist-filters">
+          <div class="form-group mb-8">
+            <div class="form-label">Período</div>
+            <div class="row" style="gap:6px">
+              <input id="hist-date-from" class="input" type="month" style="flex:1">
+              <input id="hist-date-to" class="input" type="month" style="flex:1">
+            </div>
+          </div>
+          <div class="form-group mb-8">
+            <div class="form-label">Pessoa</div>
+            <div class="chip-group" id="hist-person-chips">
+              <button class="chip active" data-val="">Todos</button>
+              <button class="chip" data-val="Felipe">Felipe</button>
+              <button class="chip" data-val="Teresa">Teresa</button>
+              <button class="chip" data-val="Casal">Casal</button>
+            </div>
+          </div>
+          <div class="form-group mb-8">
+            <div class="form-label">Tipo</div>
+            <div class="chip-group" id="hist-type-chips">
+              <button class="chip active" data-val="">Todos</button>
+              <button class="chip" data-val="income">Receita</button>
+              <button class="chip" data-val="expense">Despesa</button>
+            </div>
+          </div>
+          <button id="hist-apply" class="btn btn-primary" style="height:44px;font-size:14px">Aplicar</button>
+        </div>
+        <div class="hist-table-wrap">
+          <table class="hist-table">
+            <thead>
+              <tr>
+                <th data-col="date">Data</th>
+                <th data-col="description">Descrição</th>
+                <th data-col="person">Pessoa</th>
+                <th data-col="amount" style="text-align:right">Valor</th>
+              </tr>
+            </thead>
+            <tbody id="hist-tbody"></tbody>
+          </table>
+        </div>
+        <div id="hist-empty" class="empty-state hidden">Nenhuma transação encontrada.</div>
+      </section>
+
+      <!-- AJUSTES -->
+      <section id="tab-ajustes" class="tab-pane">
+        <div class="list-group">
+          <div class="list-group-header">Aparência</div>
+          <div class="list-group-body">
+            <div class="list-item">
+              <span class="list-item-label">Tema</span>
+              <div class="segmented" id="theme-segmented">
+                <button class="seg-btn" data-theme-val="light">Claro</button>
+                <button class="seg-btn" data-theme-val="dark">Escuro</button>
+                <button class="seg-btn" data-theme-val="auto">Auto</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="list-group">
+          <div class="list-group-header">Conta</div>
+          <div class="list-group-body">
+            <div class="list-item">
+              <span class="list-item-label">E-mail</span>
+              <span class="list-item-value text-sm" id="ajustes-email">—</span>
+            </div>
+            <div class="list-item" id="ajustes-logout" style="cursor:pointer">
+              <span class="list-item-label" style="color:var(--destructive)">Sair</span>
+            </div>
+          </div>
+        </div>
+        <div class="list-group">
+          <div class="list-group-header">Dados</div>
+          <div class="list-group-body">
+            <div class="list-item" id="ajustes-export" style="cursor:pointer">
+              <span class="list-item-label">Exportar todos os dados (CSV)</span>
+              <span class="list-item-arrow"><i data-lucide="chevron-right"></i></span>
+            </div>
+            <div class="list-item" id="ajustes-reconfig" style="cursor:pointer">
+              <span class="list-item-label">Reconfigurar Supabase</span>
+              <span class="list-item-arrow"><i data-lucide="chevron-right"></i></span>
+            </div>
+          </div>
+        </div>
+        <div class="list-group">
+          <div class="list-group-header">Sobre</div>
+          <div class="list-group-body">
+            <div class="list-item">
+              <span class="list-item-label">Gastinhos</span>
+              <span class="list-item-value text-sm">v1.0</span>
+            </div>
+            <div class="list-item">
+              <span class="list-item-label" style="color:var(--text-2)">Felipe &amp; Teresa</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- FCA BUTTON -->
+    <button id="fca-btn" aria-label="Novo lançamento">
+      <i data-lucide="plus"></i>
+    </button>
+
+    <!-- FCA BOTTOM SHEET -->
+    <div id="fca-overlay" class="hidden">
+      <div id="fca-sheet">
+        <div class="fca-handle"></div>
+
+        <div class="fca-type-toggle">
+          <button class="fca-type-btn" id="fca-income-btn">Receita</button>
+          <button class="fca-type-btn active-expense" id="fca-expense-btn">Despesa</button>
+        </div>
+
+        <div class="fca-amount-wrap">
+          <div class="fca-amount-label">Valor</div>
+          <input id="fca-amount" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off">
+        </div>
+
+        <div class="row mb-16" style="gap:12px;align-items:flex-start">
+          <div style="flex:0 0 auto">
+            <div class="form-label">Data</div>
+            <input id="fca-date" class="input" type="date" style="width:auto">
+          </div>
+          <div style="flex:1">
+            <div class="form-label">Pessoa</div>
+            <div class="chip-group" id="fca-person-chips">
+              <button class="chip" data-val="Felipe">Felipe</button>
+              <button class="chip" data-val="Teresa">Teresa</button>
+              <button class="chip" data-val="Casal">Casal</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="fca-cat-section">
+          <div class="form-label mb-8">Categoria</div>
+          <div class="fca-cat-grid" id="fca-cat-grid"></div>
+        </div>
+
+        <div class="form-label mb-8">Pagamento</div>
+        <div class="chip-group mb-16" id="fca-pay-chips">
+          <button class="chip" data-val="Pix">Pix</button>
+          <button class="chip" data-val="Crédito">Crédito</button>
+          <button class="chip" data-val="Débito">Débito</button>
+          <button class="chip" data-val="Dinheiro">Dinheiro</button>
+        </div>
+
+        <div id="fca-installment-section" class="hidden">
+          <div class="form-label mb-8">Parcelamento</div>
+          <div style="background:var(--surface-raised);border-radius:var(--r-input);padding:12px 14px;margin-bottom:16px">
+            <div class="installment-row">
+              <span>Parcelar em</span>
+              <input type="number" id="fca-inst-count" class="installment-count" value="1" min="1" max="60">
+              <span>x =</span>
+              <span id="fca-inst-per" style="font-weight:600">R$ 0,00</span>
+              <span>/mês</span>
+            </div>
+            <div class="installment-summary" id="fca-inst-summary"></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <input id="fca-description" class="input" type="text" placeholder="Descrição (opcional)" autocomplete="off">
+        </div>
+
+        <button id="fca-submit" class="btn btn-primary" style="margin-top:8px" disabled>Lançar</button>
+      </div>
+    </div>
+
+    <!-- BOTTOM TAB BAR -->
+    <nav id="tab-bar">
+      <button class="tab-item active" data-tab="dashboard">
+        <i data-lucide="layout-dashboard"></i>
+        <span>Dashboard</span>
+      </button>
+      <button class="tab-item" data-tab="analise">
+        <i data-lucide="bar-chart-2"></i>
+        <span>Análise</span>
+      </button>
+      <button class="tab-item" data-tab="historico">
+        <i data-lucide="list"></i>
+        <span>Histórico</span>
+      </button>
+      <button class="tab-item" data-tab="ajustes">
+        <i data-lucide="settings"></i>
+        <span>Ajustes</span>
+      </button>
+    </nav>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+  </div>
+
+</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
