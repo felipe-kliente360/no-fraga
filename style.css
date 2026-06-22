@@ -625,7 +625,7 @@ select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csv
   margin-left: 4px;
   vertical-align: middle;
 }
-.tx-desc { white-space: nowrap; }
+.tx-desc { display: inline-block; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; }
 .person-pill {
   display: inline-flex;
   align-items: center;

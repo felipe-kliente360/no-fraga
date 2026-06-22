@@ -134,8 +134,29 @@
               <button class="chip" data-val="provisao">Provisão</button>
             </div>
           </div>
+          <div class="row mb-8" style="gap:6px">
+            <div class="form-group" style="flex:1;min-width:0;margin:0">
+              <div class="form-label">Categoria</div>
+              <select id="hist-cat" class="input">
+                <option value="">Todas</option>
+                <option>Moradia</option><option>Mercado</option><option>Alimentação</option>
+                <option>Transporte</option><option>Saúde</option><option>Lazer</option>
+                <option>Educação</option><option>Crianças</option><option>Vestuário</option>
+                <option>Assinaturas</option><option>Pet</option><option>Amazon</option>
+                <option>Mercado Livre</option><option>Presente/Doação</option><option>Outros</option>
+              </select>
+            </div>
+            <div class="form-group" style="flex:1;min-width:0;margin:0">
+              <div class="form-label">Pagamento</div>
+              <select id="hist-pay" class="input">
+                <option value="">Todos</option>
+                <option>Pix</option><option>Boleto</option><option>Débito</option><option>Crédito</option>
+              </select>
+            </div>
+          </div>
           <button id="hist-apply" class="btn btn-primary" style="height:44px;font-size:14px">Aplicar</button>
         </div>
+        <input id="hist-search" class="input mb-8" type="search" inputmode="search" autocomplete="off" autocapitalize="none" placeholder="Buscar — descrição, categoria, pessoa…">
         <div class="hist-table-wrap">
           <table class="hist-table">
             <thead>

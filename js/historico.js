@@ -8,6 +8,9 @@ let filterPerson = '';
 let filterStatus = '';
 let filterFrom = '';
 let filterTo = '';
+let filterCat = '';
+let filterPay = '';
+let searchTerm = '';
 
 export function setHistoricoPerson(p) { filterPerson = p; }
 export function getHistoricoPerson() { return filterPerson; }
@@ -29,6 +32,11 @@ export function initHistorico() {
   });
 
   document.getElementById('hist-apply').onclick = loadHistorico;
+
+  // Client-side refinements over the loaded period — no refetch needed
+  document.getElementById('hist-cat').addEventListener('change', e => { filterCat = e.target.value; renderTable(); });
+  document.getElementById('hist-pay').addEventListener('change', e => { filterPay = e.target.value; renderTable(); });
+  document.getElementById('hist-search').addEventListener('input', e => { searchTerm = e.target.value; renderTable(); });
 
   document.querySelectorAll('.hist-table th[data-col]').forEach(th => {
     th.addEventListener('click', () => {
@@ -58,7 +66,20 @@ export async function loadHistorico() {
 }
 
 function renderTable() {
-  const sorted = [...txData].sort((a, b) => {
+  // Client-side filters: category, payment and free-text search (matches across
+  // the underlying fields, not just what's shown — description, category, person, pagamento)
+  const words = searchTerm.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  const filtered = txData.filter(r => {
+    if (filterCat && (r.category || '') !== filterCat) return false;
+    if (filterPay && (r.payment_method || '') !== filterPay) return false;
+    if (words.length) {
+      const hay = [r.description, r.category, r.person, r.payment_method].join(' ').toLowerCase();
+      if (!words.every(w => hay.includes(w))) return false;
+    }
+    return true;
+  });
+
+  const sorted = filtered.sort((a, b) => {
     let va = a[sortCol], vb = b[sortCol];
     if (sortCol === 'amount') { va = Number(va); vb = Number(vb); }
     if (va < vb) return sortDir === 'asc' ? -1 : 1;

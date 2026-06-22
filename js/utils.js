@@ -16,6 +16,10 @@ export function monthLabel(y, m) {
   const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   return `${months[m-1]} ${y}`;
 }
+export function monthShort(y, m) {
+  const months = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  return `${months[m-1]}-${String(y).slice(-2)}`;
+}
 export function todayStr() {
   return new Date().toISOString().slice(0, 10);
 }

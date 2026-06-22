@@ -1,5 +1,5 @@
 import { getGrouped, getMonthlyTotals } from './db.js';
-import { formatBRL, lastNMonths, monthLabel, addMonths } from './utils.js';
+import { formatBRL, lastNMonths, monthLabel, monthShort, addMonths } from './utils.js';
 
 let anChart;
 let currentPerson = '';
@@ -30,7 +30,7 @@ export async function loadAnalise() {
 
   const metricKey = metric === 'count' ? 'count' : metric === 'avg' ? 'avg' : 'sum';
   const entries = Object.entries(map).sort((a,b) => b[1][metricKey] - a[1][metricKey]);
-  const labels = entries.map(([k]) => dim === 'month' ? monthLabel(...k.split('-').map(Number)) : k);
+  const labels = entries.map(([k]) => dim === 'month' ? monthShort(...k.split('-').map(Number)) : k);
   const values = entries.map(([,v]) => metric === 'count' ? v.count : metric === 'avg' ? v.avg : v.sum);
   const total = values.reduce((s,v) => s+v, 0);
 
@@ -92,6 +92,9 @@ export async function loadAnalise() {
   } else {
     // bar-h or bar-v
     const isHoriz = chartType === 'bar-h';
+    // value axis gets the numeric (k) formatter; category axis keeps its labels
+    const valAxis = isHoriz ? 'x' : 'y';
+    const catAxis = isHoriz ? 'y' : 'x';
     anChart = new Chart(ctx, {
       type: 'bar',
       data: { labels, datasets: [{ data: values, backgroundColor: COLORS, borderRadius: 4, borderWidth: 0, borderSkipped: false }] },
@@ -100,8 +103,8 @@ export async function loadAnalise() {
         responsive: true, maintainAspectRatio: false,
         plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${fmtLabel(c.raw)}` } } },
         scales: {
-          x: { grid: { display: isHoriz }, ticks: { callback: v => v >= 1000 ? `${(v/1000).toFixed(0)}k` : v } },
-          y: { grid: { display: !isHoriz }, ticks: { callback: isHoriz ? undefined : (v => v >= 1000 ? `${(v/1000).toFixed(0)}k` : v) } }
+          [valAxis]: { grid: { display: true }, ticks: { callback: v => v >= 1000 ? `${(v/1000).toFixed(0)}k` : v } },
+          [catAxis]: { grid: { display: false }, ticks: { autoSkip: false } }
         }
       }
     });
