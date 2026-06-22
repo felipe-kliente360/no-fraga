@@ -79,6 +79,12 @@ function loginScreen() {
 async function appScreen() {
   show('screen-app');
   initDb(sbClient);
+  // Detect which person this user is and cache for FCA default
+  sbClient.auth.getUser().then(({ data }) => {
+    const email = (data?.user?.email || '').toLowerCase();
+    const p = email.includes('teresa') ? 'Teresa' : email.includes('felipe') ? 'Felipe' : '';
+    if (p) localStorage.setItem('gastinhos_default_person', p);
+  });
   initFCA();
   initDashboard();
   initAnalise();

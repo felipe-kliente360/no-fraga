@@ -173,9 +173,18 @@
                 <button class="seg-btn" data-theme-val="auto">Auto</button>
               </div>
             </div>
-            <div class="list-item">
-              <span class="list-item-label">Cor de destaque</span>
-              <input type="color" id="ajustes-accent" class="color-input" value="#6366F1">
+            <div class="list-item" style="flex-wrap:wrap;height:auto;padding:12px 16px 14px">
+              <span class="list-item-label" style="width:100%;margin-bottom:10px">Cor de destaque</span>
+              <div class="color-swatches" id="ajustes-accent-swatches">
+                <button class="color-swatch active" data-color="#6366F1" style="background:#6366F1"></button>
+                <button class="color-swatch" data-color="#3B82F6" style="background:#3B82F6"></button>
+                <button class="color-swatch" data-color="#06B6D4" style="background:#06B6D4"></button>
+                <button class="color-swatch" data-color="#22C55E" style="background:#22C55E"></button>
+                <button class="color-swatch" data-color="#F59E0B" style="background:#F59E0B"></button>
+                <button class="color-swatch" data-color="#EC4899" style="background:#EC4899"></button>
+                <button class="color-swatch" data-color="#F97316" style="background:#F97316"></button>
+                <button class="color-swatch" data-color="#64748B" style="background:#64748B"></button>
+              </div>
             </div>
           </div>
         </div>
@@ -229,61 +238,65 @@
           <div class="fca-amount-label">Valor</div>
           <input id="fca-amount" type="text" inputmode="numeric" placeholder="R$ 0,00" autocomplete="off">
         </div>
-        <div class="row mb-16" style="gap:10px;align-items:flex-end">
-          <div style="flex:1">
+        <div class="fca-inst-below" id="fca-inst-summary"></div>
+        <div class="fca-2col mb-12">
+          <div>
             <div class="form-label">Data</div>
-            <input id="fca-date" class="input" type="date">
+            <input id="fca-date" class="input input-sm" type="date">
           </div>
-          <label class="fca-provisao-toggle" for="fca-provisao-check">
-            <input type="checkbox" id="fca-provisao-check">
-            <span>Provisão</span>
-          </label>
+          <div class="fca-provisao-col">
+            <div class="form-label">Provisão</div>
+            <label class="fca-switch">
+              <input type="checkbox" id="fca-provisao-check">
+              <span class="fca-switch-track"></span>
+            </label>
+          </div>
         </div>
-        <div class="row mb-16" style="gap:10px">
-          <select id="fca-person-select" class="input" style="flex:1">
-            <option value="">Pessoa</option>
-            <option>Felipe</option>
-            <option>Teresa</option>
-            <option>Casal</option>
-          </select>
-          <select id="fca-cat-select" class="input" style="flex:1">
-            <option value="">Categoria</option>
-            <option>Moradia</option>
-            <option>Mercado</option>
-            <option>Alimentação</option>
-            <option>Transporte</option>
-            <option>Saúde</option>
-            <option>Lazer</option>
-            <option>Educação</option>
-            <option>Vestuário</option>
-            <option>Assinaturas</option>
-            <option>Investimento</option>
-            <option>Financeiro</option>
-            <option>Pet</option>
-            <option>Presente/Doação</option>
-            <option>Outros</option>
-          </select>
+        <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:10px;margin-bottom:12px">
+          <div>
+            <div class="form-label">Pessoa</div>
+            <select id="fca-person-select" class="input input-sm">
+              <option value="">—</option>
+              <option>Felipe</option>
+              <option>Teresa</option>
+              <option>Casal</option>
+            </select>
+          </div>
+          <div>
+            <div class="form-label">Categoria</div>
+            <select id="fca-cat-select" class="input input-sm">
+              <option value="">—</option>
+              <option>Moradia</option>
+              <option>Mercado</option>
+              <option>Alimentação</option>
+              <option>Transporte</option>
+              <option>Saúde</option>
+              <option>Lazer</option>
+              <option>Educação</option>
+              <option>Vestuário</option>
+              <option>Assinaturas</option>
+              <option>Investimento</option>
+              <option>Financeiro</option>
+              <option>Pet</option>
+              <option>Presente/Doação</option>
+              <option>Outros</option>
+            </select>
+          </div>
         </div>
-        <div class="form-label mb-8">Pagamento</div>
-        <div class="chip-group mb-16" id="fca-pay-chips">
-          <button class="chip" data-val="Pix">Pix</button>
-          <button class="chip" data-val="Crédito">Crédito</button>
-          <button class="chip" data-val="Débito">Débito</button>
+        <div class="form-label mb-6">Pagamento</div>
+        <div class="fca-pay-row mb-12" id="fca-pay-chips">
           <button class="chip" data-val="Dinheiro">Dinheiro</button>
-        </div>
-        <div id="fca-installment-section" class="hidden">
-          <div class="form-label mb-8">Parcelamento</div>
-          <div class="fca-inst-row mb-8">
-            <span class="fca-inst-label">Parcelar em</span>
-            <input type="number" id="fca-inst-count" class="installment-count" value="1" min="1" max="60">
-            <span class="fca-inst-label">parcelas</span>
+          <button class="chip" data-val="Pix">Pix</button>
+          <button class="chip" data-val="Débito">Débito</button>
+          <button class="chip active" data-val="Crédito">Crédito</button>
+          <div class="fca-inst-ctrl" id="fca-inst-ctrl">
+            <button class="inst-step" id="fca-inst-minus">−</button>
+            <span class="inst-val" id="fca-inst-display">1</span>
+            <button class="inst-step" id="fca-inst-plus">+</button>
           </div>
-          <div class="fca-inst-info" id="fca-inst-summary"></div>
         </div>
-        <div class="form-group">
-          <input id="fca-description" class="input" type="text" placeholder="Descrição (opcional)" autocomplete="off">
-        </div>
-        <button id="fca-submit" class="btn btn-primary" style="margin-top:8px" disabled>Lançar</button>
+        <input id="fca-description" class="input mb-12" type="text" placeholder="Descrição (opcional)" autocomplete="off">
+        <button id="fca-submit" class="btn btn-primary" disabled>Lançar</button>
       </div>
     </div>
 

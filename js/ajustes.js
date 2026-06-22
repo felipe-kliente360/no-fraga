@@ -27,39 +27,36 @@ export async function initAjustes(supabase) {
   const budgetInput = document.getElementById('ajustes-budget');
   if (budgetInput) {
     const current = await getBudget();
-    budgetInput.value = current;
+    budgetInput.value = new Intl.NumberFormat('pt-BR').format(current);
     let saveTimer;
     budgetInput.addEventListener('focus', () => {
-      // Show raw number on focus for easier editing
-      const val = parseFloat(budgetInput.value.replace(/\D/g, '') || '0');
-      budgetInput.value = val > 0 ? val : '';
+      const raw = parseFloat(budgetInput.value.replace(/\./g, '').replace(',', '.') || '0');
+      budgetInput.value = raw > 0 ? String(Math.round(raw)) : '';
     });
     budgetInput.addEventListener('blur', () => {
-      // Reformat on blur
-      const digits = budgetInput.value.replace(/\D/g, '');
-      const val = parseFloat(digits || '0');
-      if (val > 0) budgetInput.value = val;
+      const val = parseFloat(budgetInput.value.replace(/\D/g, '') || '0');
+      budgetInput.value = val > 0 ? new Intl.NumberFormat('pt-BR').format(val) : '';
     });
     budgetInput.addEventListener('input', () => {
       clearTimeout(saveTimer);
       saveTimer = setTimeout(async () => {
-        const digits = budgetInput.value.replace(/\D/g, '');
-        const val = parseFloat(digits || '0');
-        if (val > 0) {
-          await setBudget(val);
-          showToast('Orçamento salvo');
-        }
+        const val = parseFloat(budgetInput.value.replace(/\D/g, '') || '0');
+        if (val > 0) { await setBudget(val); showToast('Orçamento salvo'); }
       }, 800);
     });
   }
 
-  // accent color
-  const accentInput = document.getElementById('ajustes-accent');
-  if (accentInput) {
+  // accent color swatches
+  const swatches = document.getElementById('ajustes-accent-swatches');
+  if (swatches) {
     const savedColor = localStorage.getItem('gastinhos_accent') || '#6366F1';
-    accentInput.value = savedColor;
-    accentInput.addEventListener('input', () => {
-      applyAccent(accentInput.value);
+    swatches.querySelectorAll('.color-swatch').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.color.toLowerCase() === savedColor.toLowerCase());
+      btn.addEventListener('click', () => {
+        swatches.querySelectorAll('.color-swatch').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        applyAccent(btn.dataset.color);
+      });
     });
   }
 
