@@ -239,50 +239,22 @@
           <input id="fca-amount" type="text" inputmode="numeric" placeholder="R$ 0,00" autocomplete="off">
         </div>
         <div class="fca-inst-below" id="fca-inst-summary"></div>
-        <div class="fca-2col mb-12">
+        <div class="fca-date-person-row mb-12">
           <div>
             <div class="form-label">Data</div>
-            <input id="fca-date" class="input input-sm" type="date">
+            <input id="fca-date" class="input input-sm" type="date" style="width:136px">
           </div>
-          <div class="fca-provisao-col">
-            <div class="form-label">Provisão</div>
-            <label class="fca-switch">
-              <input type="checkbox" id="fca-provisao-check">
-              <span class="fca-switch-track"></span>
-            </label>
-          </div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:10px;margin-bottom:12px">
           <div>
             <div class="form-label">Pessoa</div>
-            <select id="fca-person-select" class="input input-sm">
-              <option value="">—</option>
-              <option>Felipe</option>
-              <option>Teresa</option>
-              <option>Casal</option>
-            </select>
-          </div>
-          <div>
-            <div class="form-label">Categoria</div>
-            <select id="fca-cat-select" class="input input-sm">
-              <option value="">—</option>
-              <option>Moradia</option>
-              <option>Mercado</option>
-              <option>Alimentação</option>
-              <option>Transporte</option>
-              <option>Saúde</option>
-              <option>Lazer</option>
-              <option>Educação</option>
-              <option>Vestuário</option>
-              <option>Assinaturas</option>
-              <option>Investimento</option>
-              <option>Financeiro</option>
-              <option>Pet</option>
-              <option>Presente/Doação</option>
-              <option>Outros</option>
-            </select>
+            <div class="chip-group" id="fca-person-chips">
+              <button class="chip" data-val="Felipe">Felipe</button>
+              <button class="chip" data-val="Teresa">Teresa</button>
+              <button class="chip" data-val="Casal">Casal</button>
+            </div>
           </div>
         </div>
+        <div class="form-label mb-6">Categoria</div>
+        <div class="chip-group mb-12" id="fca-cat-chips"></div>
         <div class="form-label mb-6">Pagamento</div>
         <div class="fca-pay-row mb-12" id="fca-pay-chips">
           <button class="chip" data-val="Dinheiro">Dinheiro</button>

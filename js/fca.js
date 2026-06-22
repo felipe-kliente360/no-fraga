@@ -5,7 +5,9 @@ const MEM_KEY = 'gastinhos_fca_mem';
 const ALL_CATS = ['Moradia','Mercado','Alimentação','Transporte','Saúde','Lazer','Educação','Vestuário','Assinaturas','Investimento','Financeiro','Pet','Presente/Doação','Outros'];
 
 let currentPay = 'Crédito';
-let isProvisao = false;
+let currentPerson = '';
+let currentCat = '';
+let catOrder = [...ALL_CATS];
 let amountCents = 0;
 let updatingAmount = false;
 let editId = null;
@@ -29,9 +31,23 @@ export function initFCA() {
     updateInstallmentCalc();
   });
 
-  // Person / Category selects
-  document.getElementById('fca-person-select').addEventListener('change', updateSubmitState);
-  document.getElementById('fca-cat-select').addEventListener('change', updateSubmitState);
+  // Person chips
+  document.getElementById('fca-person-chips').addEventListener('click', e => {
+    const btn = e.target.closest('[data-val]'); if (!btn) return;
+    document.querySelectorAll('#fca-person-chips .chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    currentPerson = btn.dataset.val;
+    updateSubmitState();
+  });
+
+  // Category chips (delegated — chips built dynamically)
+  document.getElementById('fca-cat-chips').addEventListener('click', e => {
+    const btn = e.target.closest('[data-cat]'); if (!btn) return;
+    document.querySelectorAll('#fca-cat-chips .chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    currentCat = btn.dataset.cat;
+    updateSubmitState();
+  });
 
   // Payment chips
   document.getElementById('fca-pay-chips').addEventListener('click', e => {
@@ -43,16 +59,8 @@ export function initFCA() {
     updateInstallmentCalc();
   });
 
-  // Provisão switch
-  document.getElementById('fca-provisao-check').addEventListener('change', e => {
-    isProvisao = e.target.checked;
-  });
-
-  // Date → auto-enforce provisão
-  document.getElementById('fca-date').addEventListener('change', () => {
-    enforceDateProvisao();
-    updateInstallmentCalc();
-  });
+  // Date change → update installment calc
+  document.getElementById('fca-date').addEventListener('change', updateInstallmentCalc);
 
   // Installment +/- buttons
   document.getElementById('fca-inst-minus').addEventListener('click', () => {
@@ -79,26 +87,15 @@ async function refreshCatOrder() {
       .map(([k]) => k)
       .filter(k => ALL_CATS.includes(k));
     const rest = ALL_CATS.filter(c => !ranked.includes(c));
-    const ordered = [...ranked, ...rest];
-    const sel = document.getElementById('fca-cat-select');
-    const prev = sel.value;
-    sel.innerHTML = '<option value="">—</option>' + ordered.map(c => `<option>${c}</option>`).join('');
-    if (prev) sel.value = prev;
+    catOrder = [...ranked, ...rest];
+    buildCatChips();
   } catch {}
 }
 
-function enforceDateProvisao() {
-  const dateVal = document.getElementById('fca-date').value;
-  const today = todayStr();
-  const checkbox = document.getElementById('fca-provisao-check');
-  if (!dateVal) return;
-  if (dateVal < today) {
-    isProvisao = false; checkbox.checked = false; checkbox.disabled = true;
-  } else if (dateVal > today) {
-    isProvisao = true; checkbox.checked = true; checkbox.disabled = true;
-  } else {
-    checkbox.disabled = false;
-  }
+function buildCatChips() {
+  document.getElementById('fca-cat-chips').innerHTML = catOrder
+    .map(c => `<button class="chip${c === currentCat ? ' active' : ''}" data-cat="${c}">${c}</button>`)
+    .join('');
 }
 
 function updateInstCtrl() {
@@ -112,7 +109,7 @@ function syncInstDisplay() {
 
 function openFCA() {
   const mem = (() => { try { return JSON.parse(localStorage.getItem(MEM_KEY)) || {}; } catch { return {}; } })();
-  amountCents = 0; isProvisao = false; editId = null; installCount = 1;
+  amountCents = 0; editId = null; installCount = 1;
 
   document.getElementById('fca-amount').value = '';
   document.getElementById('fca-description').value = '';
@@ -120,15 +117,15 @@ function openFCA() {
   document.getElementById('fca-inst-display').textContent = '1';
   document.getElementById('fca-inst-summary').textContent = '';
 
-  const checkbox = document.getElementById('fca-provisao-check');
-  checkbox.checked = false; checkbox.disabled = false;
-
   // Person: memory → default person → blank
   const defaultPerson = localStorage.getItem('gastinhos_default_person') || '';
-  document.getElementById('fca-person-select').value = mem.person || defaultPerson;
+  currentPerson = mem.person || defaultPerson;
+  document.querySelectorAll('#fca-person-chips .chip').forEach(c =>
+    c.classList.toggle('active', c.dataset.val === currentPerson));
 
   // Category: memory
-  document.getElementById('fca-cat-select').value = mem.cat || '';
+  currentCat = mem.cat || '';
+  buildCatChips();
 
   // Payment: memory or default Crédito
   currentPay = mem.pay || 'Crédito';
@@ -148,9 +145,14 @@ function openEditFCA(tx) {
   amountCents = Math.round(tx.amount * 100);
   document.getElementById('fca-amount').value = formatBRL(amountCents / 100);
   document.getElementById('fca-date').value = tx.date;
-  document.getElementById('fca-person-select').value = tx.person || '';
-  document.getElementById('fca-cat-select').value = tx.category || '';
   document.getElementById('fca-description').value = tx.description || '';
+
+  currentPerson = tx.person || '';
+  document.querySelectorAll('#fca-person-chips .chip').forEach(c =>
+    c.classList.toggle('active', c.dataset.val === currentPerson));
+
+  currentCat = tx.category || '';
+  buildCatChips();
 
   currentPay = tx.payment_method || 'Crédito';
   document.querySelectorAll('#fca-pay-chips .chip').forEach(c => c.classList.toggle('active', c.dataset.val === currentPay));
@@ -158,11 +160,6 @@ function openEditFCA(tx) {
 
   installCount = tx.installment_total || 1;
   document.getElementById('fca-inst-display').textContent = installCount;
-
-  isProvisao = tx.status === 'provisao';
-  const checkbox = document.getElementById('fca-provisao-check');
-  checkbox.checked = isProvisao;
-  enforceDateProvisao();
 
   updateInstallmentCalc();
   document.getElementById('fca-submit').textContent = 'Salvar alterações';
@@ -174,9 +171,7 @@ function closeFCA() {
 }
 
 function updateSubmitState() {
-  const ok = (amountCents / 100) > 0
-    && document.getElementById('fca-person-select').value
-    && document.getElementById('fca-cat-select').value;
+  const ok = (amountCents / 100) > 0 && currentPerson && currentCat;
   document.getElementById('fca-submit').disabled = !ok;
 }
 
@@ -204,22 +199,20 @@ async function handleSubmit() {
   const n = currentPay === 'Crédito' ? installCount : 1;
   const [y, m, d] = dateStr.split('-').map(Number);
   const today = todayStr();
-  const currentPerson = document.getElementById('fca-person-select').value;
-  const currentCat = document.getElementById('fca-cat-select').value;
 
   const btn = document.getElementById('fca-submit');
   btn.disabled = true; btn.textContent = 'Salvando…';
 
   try {
     if (editId) {
+      const status = dateStr > today ? 'provisao' : 'realizado';
       await updateTx(editId, {
         date: dateStr, amount, category: currentCat, person: currentPerson,
-        description: desc, payment_method: currentPay || null,
-        status: isProvisao ? 'provisao' : 'realizado'
+        description: desc, payment_method: currentPay || null, status
       });
       showToast('Alterações salvas');
     } else if (n <= 1) {
-      const status = isProvisao ? 'provisao' : 'realizado';
+      const status = dateStr > today ? 'provisao' : 'realizado';
       await addTx({ date: dateStr, type: 'expense', amount, category: currentCat,
         person: currentPerson, description: desc, payment_method: currentPay || null, status });
       showToast(status === 'provisao' ? 'Provisão registrada' : 'Lançamento salvo');
@@ -229,7 +222,7 @@ async function handleSubmit() {
       const rows = Array.from({ length: n }, (_, i) => {
         const dt = addMonths(y, m, i);
         const dateI = `${dt.year}-${String(dt.month).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-        const status = isProvisao ? 'provisao' : (dateI <= today ? 'realizado' : 'provisao');
+        const status = dateI > today ? 'provisao' : 'realizado';
         return { date: dateI, type: 'expense', amount: perAmount, category: currentCat,
           person: currentPerson, description: desc, payment_method: 'Crédito',
           installment_current: i + 1, installment_total: n, installment_group_id: groupId, status };
