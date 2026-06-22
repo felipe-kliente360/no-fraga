@@ -17,21 +17,6 @@ export async function initAjustes(supabase) {
     });
   });
 
-  // identity ("Eu" = this person)
-  const identity = document.getElementById('ajustes-identity');
-  if (identity) {
-    const me = localStorage.getItem('gastinhos_default_person') || 'Felipe';
-    identity.querySelectorAll('.seg-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.person === me);
-      btn.addEventListener('click', () => {
-        identity.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        localStorage.setItem('gastinhos_default_person', btn.dataset.person);
-        showToast(`Você é ${btn.dataset.person}`);
-      });
-    });
-  }
-
   // email
   supabase.auth.getUser().then(({ data }) => {
     const el = document.getElementById('ajustes-email');

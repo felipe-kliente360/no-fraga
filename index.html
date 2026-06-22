@@ -51,7 +51,7 @@
       </div>
       <div class="form-group">
         <label class="form-label">Usuário</label>
-        <input id="login-user" class="input" type="text" inputmode="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="felipe ou teresa">
+        <input id="login-user" class="input" type="text" inputmode="text" name="nf-user" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" data-1p-ignore data-lpignore="true" placeholder="felipe ou teresa">
       </div>
       <div class="form-group">
         <label class="form-label">Senha</label>
@@ -162,7 +162,7 @@
               <span class="list-item-label">Mensal</span>
               <div style="display:flex;align-items:center;gap:6px;flex:1;justify-content:flex-end">
                 <span style="font-size:14px;color:var(--text-2)">R$</span>
-                <input id="ajustes-budget" class="input" type="text" inputmode="numeric" style="width:120px;text-align:right;padding:6px 10px;font-size:15px;font-weight:600">
+                <input id="ajustes-budget" class="input" type="text" inputmode="numeric" name="nf-budget" autocomplete="off" data-1p-ignore data-lpignore="true" style="width:120px;text-align:right;padding:6px 10px;font-size:15px;font-weight:600">
               </div>
             </div>
           </div>
@@ -196,13 +196,6 @@
         <div class="list-group">
           <div class="list-group-header">Conta</div>
           <div class="list-group-body">
-            <div class="list-item">
-              <span class="list-item-label">Sou</span>
-              <div class="segmented" id="ajustes-identity">
-                <button class="seg-btn" data-person="Felipe">Felipe</button>
-                <button class="seg-btn" data-person="Teresa">Teresa</button>
-              </div>
-            </div>
             <div class="list-item">
               <span class="list-item-label">E-mail</span>
               <span class="list-item-value text-sm" id="ajustes-email">—</span>

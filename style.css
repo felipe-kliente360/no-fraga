@@ -422,9 +422,11 @@ select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csv
   align-items: start;
 }
 .fca-date-person-row > div { min-width: 0; overflow: hidden; }
-#fca-date { width: 100%; box-sizing: border-box; height: 44px; }
+#fca-date { width: 100%; box-sizing: border-box; height: 44px; -webkit-appearance: none; appearance: none; text-align: center; }
 #fca-person-chips { display: flex; flex-wrap: nowrap; gap: 6px; }
 #fca-person-chips .chip { flex: 1; height: 44px; display: flex; align-items: center; justify-content: center; text-align: center; min-width: 0; padding-left: 4px; padding-right: 4px; overflow: hidden; }
+/* "Eu" is the short first chip — give it less width so the row stays balanced */
+#fca-person-chips .chip:first-child { flex: 0.62; }
 
 /* FCA category chips – single-row horizontal scroll */
 #fca-cat-chips {
