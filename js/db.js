@@ -58,16 +58,14 @@ export async function setBudget(value) {
   if (error) throw error;
 }
 
-export async function getMonthlyTotals(months) {
+export async function getMonthlyTotals(months, person) {
   const { getMonthRange } = await import('./utils.js');
   const results = [];
   for (const { year, month } of months) {
     const { start, end } = getMonthRange(year, month);
-    const { data } = await sb.from('transactions')
-      .select('status, amount')
-      .eq('type', 'expense')
-      .gte('date', start)
-      .lte('date', end);
+    let q = sb.from('transactions').select('status, amount').eq('type', 'expense').gte('date', start).lte('date', end);
+    if (person) q = q.eq('person', person);
+    const { data } = await q;
     const rows = data || [];
     const realizado = rows.filter(r => r.status !== 'provisao').reduce((s, r) => s + Number(r.amount), 0);
     const provisao = rows.filter(r => r.status === 'provisao').reduce((s, r) => s + Number(r.amount), 0);
@@ -76,12 +74,10 @@ export async function getMonthlyTotals(months) {
   return results;
 }
 
-export async function getGrouped(start, end, dimension) {
-  const { data } = await sb.from('transactions')
-    .select('*')
-    .eq('type', 'expense')
-    .gte('date', start)
-    .lte('date', end);
+export async function getGrouped(start, end, dimension, person) {
+  let q = sb.from('transactions').select('*').eq('type', 'expense').gte('date', start).lte('date', end);
+  if (person) q = q.eq('person', person);
+  const { data } = await q;
   const rows = data || [];
   const map = {};
   for (const r of rows) {

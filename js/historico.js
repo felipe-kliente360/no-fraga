@@ -9,6 +9,9 @@ let filterStatus = '';
 let filterFrom = '';
 let filterTo = '';
 
+export function setHistoricoPerson(p) { filterPerson = p; }
+export function getHistoricoPerson() { return filterPerson; }
+
 export function initHistorico() {
   const now = new Date();
   const ym = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
@@ -16,16 +19,6 @@ export function initHistorico() {
   document.getElementById('hist-date-to').value = ym;
   filterFrom = ym;
   filterTo = ym;
-
-  // person chips (toggleable, no "Todos")
-  document.getElementById('hist-person-chips').addEventListener('click', e => {
-    const btn = e.target.closest('[data-val]');
-    if (!btn) return;
-    const isActive = btn.classList.contains('active');
-    document.querySelectorAll('#hist-person-chips .chip').forEach(c => c.classList.remove('active'));
-    if (!isActive) { btn.classList.add('active'); filterPerson = btn.dataset.val; }
-    else filterPerson = '';
-  });
 
   // status chips
   document.getElementById('hist-status-chips').addEventListener('click', e => {

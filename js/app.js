@@ -1,8 +1,8 @@
 import { getConfig, saveConfig, clearConfig } from './config.js';
 import { initFCA } from './fca.js';
 import { initDashboard, loadDashboard } from './dashboard.js';
-import { initAnalise, loadAnalise } from './analise.js';
-import { initHistorico, loadHistorico } from './historico.js';
+import { initAnalise, loadAnalise, setAnalisePerson, getAnalisePerson } from './analise.js';
+import { initHistorico, loadHistorico, setHistoricoPerson, getHistoricoPerson } from './historico.js';
 import { initAjustes, applyTheme, applyAccent } from './ajustes.js';
 import { init as initDb } from './db.js';
 
@@ -79,7 +79,6 @@ function loginScreen() {
 async function appScreen() {
   show('screen-app');
   initDb(sbClient);
-  // Detect which person this user is and cache for FCA default
   sbClient.auth.getUser().then(({ data }) => {
     const email = (data?.user?.email || '').toLowerCase();
     const p = email.includes('teresa') ? 'Teresa' : email.includes('felipe') ? 'Felipe' : '';
@@ -94,7 +93,6 @@ async function appScreen() {
   lucide.createIcons();
   loadDashboard();
 
-  // Auto-refresh after FCA save
   window.addEventListener('gastinhos:tx-saved', () => {
     loadDashboard();
     const activeTab = document.querySelector('.tab-item.active')?.dataset.tab;
@@ -103,8 +101,32 @@ async function appScreen() {
   });
 }
 
+function buildPersonFilter(currentP, btnId, popoverId) {
+  return `
+    <button class="btn btn-ghost" id="${btnId}"><i data-lucide="users"></i></button>
+    <div class="person-filter-popover" id="${popoverId}">
+      ${['','Felipe','Teresa','Casal'].map(p =>
+        `<div class="pf-option${p === currentP ? ' active' : ''}" data-p="${p}">${p || 'Todos'}</div>`
+      ).join('')}
+    </div>`;
+}
+
+function setupPersonPopover(popoverId, btnId, onChange) {
+  const btn = document.getElementById(btnId);
+  const pop = document.getElementById(popoverId);
+  if (!btn || !pop) return;
+  btn.onclick = e => { e.stopPropagation(); pop.classList.toggle('open'); };
+  pop.querySelectorAll('.pf-option').forEach(el => {
+    el.onclick = () => {
+      onChange(el.dataset.p);
+      pop.classList.remove('open');
+      pop.querySelectorAll('.pf-option').forEach(x => x.classList.toggle('active', x.dataset.p === el.dataset.p));
+    };
+  });
+  document.addEventListener('click', () => pop?.classList.remove('open'));
+}
+
 function setupTabs() {
-  const tabs = { dashboard: loadDashboard, analise: loadAnalise, historico: loadHistorico, ajustes: () => {} };
   const titles = { dashboard: 'Dashboard', analise: 'Análise', historico: 'Histórico', ajustes: 'Ajustes' };
 
   document.querySelectorAll('.tab-item').forEach(btn => {
@@ -115,31 +137,35 @@ function setupTabs() {
       document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
       document.getElementById(`tab-${tab}`).classList.add('active');
       document.getElementById('header-title').textContent = titles[tab];
-      // swap header controls
+
       const ctrl = document.getElementById('header-controls');
+
       if (tab === 'dashboard') {
-        // dashboard re-inits its own header
         initDashboard();
         lucide.createIcons();
         loadDashboard();
-      } else if (tab === 'historico') {
-        ctrl.innerHTML = `<button class="btn btn-ghost" id="hist-filter-toggle"><i data-lucide="sliders-horizontal"></i></button><button class="btn btn-ghost" id="hist-export-btn"><i data-lucide="download"></i></button>`;
+      } else if (tab === 'analise') {
+        ctrl.innerHTML = buildPersonFilter(getAnalisePerson(), 'an-person-btn', 'an-person-popover');
         lucide.createIcons();
-        document.getElementById('hist-filter-toggle').addEventListener('click', () => document.getElementById('hist-filter-bar').classList.toggle('open'));
-        document.getElementById('hist-export-btn').addEventListener('click', async () => {
-          const { getTx } = await import('./db.js');
-          const { exportCSV } = await import('./utils.js');
-          const filterFrom = document.getElementById('hist-date-from').value;
-          const filterTo = document.getElementById('hist-date-to').value;
-          const start = filterFrom ? filterFrom + '-01' : undefined;
-          const end = filterTo ? (() => { const [y, m] = filterTo.split('-'); return new Date(+y, +m, 0).toISOString().slice(0, 10); })() : undefined;
-          const rows = await getTx({ start, end });
-          exportCSV(rows, `gastinhos-${filterFrom || 'todos'}.csv`);
+        setupPersonPopover('an-person-popover', 'an-person-btn', (p) => {
+          setAnalisePerson(p);
+          loadAnalise();
         });
+        loadAnalise();
+      } else if (tab === 'historico') {
+        ctrl.innerHTML = `<button class="btn btn-ghost" id="hist-filter-toggle"><i data-lucide="sliders-horizontal"></i></button>` +
+          buildPersonFilter(getHistoricoPerson(), 'hist-person-btn', 'hist-person-popover');
+        lucide.createIcons();
+        document.getElementById('hist-filter-toggle').addEventListener('click', () =>
+          document.getElementById('hist-filter-bar').classList.toggle('open'));
+        setupPersonPopover('hist-person-popover', 'hist-person-btn', (p) => {
+          setHistoricoPerson(p);
+          loadHistorico();
+        });
+        loadHistorico();
       } else {
         ctrl.innerHTML = '';
       }
-      if (tabs[tab]) tabs[tab]();
     });
   });
 }

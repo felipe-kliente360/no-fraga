@@ -127,8 +127,8 @@ function openFCA() {
   currentCat = mem.cat || '';
   buildCatChips();
 
-  // Payment: memory or default Crédito
-  currentPay = mem.pay || 'Crédito';
+  // Payment: always default to Crédito
+  currentPay = 'Crédito';
   document.querySelectorAll('#fca-pay-chips .chip').forEach(c => c.classList.toggle('active', c.dataset.val === currentPay));
   updateInstCtrl();
 
@@ -230,7 +230,7 @@ async function handleSubmit() {
       await addTxBatch(rows);
       showToast(`${n} parcelas criadas`);
     }
-    localStorage.setItem(MEM_KEY, JSON.stringify({ person: currentPerson, pay: currentPay, cat: currentCat }));
+    localStorage.setItem(MEM_KEY, JSON.stringify({ person: currentPerson, cat: currentCat }));
     closeFCA();
     window.dispatchEvent(new CustomEvent('gastinhos:tx-saved'));
   } catch (e) {

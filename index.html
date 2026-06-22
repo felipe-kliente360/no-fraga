@@ -11,6 +11,7 @@
   <title>Gastinhos</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-treemap@2/dist/chartjs-chart-treemap.min.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
@@ -92,6 +93,14 @@
             <option value="6" selected>6 meses</option>
             <option value="12">12 meses</option>
           </select>
+          <select id="an-chart-type" class="analise-select">
+            <option value="bar-h" selected>Barra horiz.</option>
+            <option value="bar-v">Barra vert.</option>
+            <option value="doughnut">Rosca</option>
+            <option value="radar">Radar</option>
+            <option value="polar">Polar</option>
+            <option value="treemap">Mapa</option>
+          </select>
         </div>
         <div class="chart-wrap">
           <div class="chart-canvas-wrap" style="height:220px">
@@ -109,16 +118,8 @@
           <div class="form-group mb-8">
             <div class="form-label">Período</div>
             <div class="row" style="gap:6px">
-              <input id="hist-date-from" class="input" type="month" style="flex:1">
-              <input id="hist-date-to" class="input" type="month" style="flex:1">
-            </div>
-          </div>
-          <div class="form-group mb-8">
-            <div class="form-label">Pessoa</div>
-            <div class="chip-group" id="hist-person-chips">
-              <button class="chip" data-val="Felipe">Felipe</button>
-              <button class="chip" data-val="Teresa">Teresa</button>
-              <button class="chip" data-val="Casal">Casal</button>
+              <input id="hist-date-from" class="input" type="month" style="flex:1;min-width:0">
+              <input id="hist-date-to" class="input" type="month" style="flex:1;min-width:0">
             </div>
           </div>
           <div class="form-group mb-8">

@@ -417,6 +417,17 @@ select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csv
   flex-wrap: wrap;
 }
 
+/* FCA category chips – single-row horizontal scroll */
+#fca-cat-chips {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 4px;
+  margin-bottom: -4px;
+}
+#fca-cat-chips::-webkit-scrollbar { display: none; }
+
 /* Installment info below value */
 .fca-inst-below {
   text-align: center;
@@ -489,6 +500,7 @@ select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csv
   width: 100%;
 }
 .hist-filters.open { display: block; }
+.hist-filters .input[type="month"] { font-size: 13px; min-width: 0; }
 .hist-table-wrap {
   background: var(--surface);
   border-radius: var(--r-card);
