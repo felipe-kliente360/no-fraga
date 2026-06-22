@@ -576,12 +576,14 @@ select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csv
 .hist-table-wrap {
   background: var(--surface);
   border-radius: var(--r-card);
-  overflow: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   box-shadow: 0 1px 3px rgba(0,0,0,0.06);
 }
 [data-theme="dark"] .hist-table-wrap { box-shadow: none; }
 .hist-table {
-  width: 100%;
+  width: max-content;
+  min-width: 100%;
   border-collapse: collapse;
   font-size: 13px;
 }
@@ -606,6 +608,7 @@ select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csv
   border-bottom: 1px solid var(--separator);
   color: var(--text-1);
   vertical-align: middle;
+  white-space: nowrap;
 }
 .hist-table tr:last-child td { border-bottom: none; }
 .hist-table tr:active td { background: var(--surface-raised); }
@@ -622,12 +625,16 @@ select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csv
   margin-left: 4px;
   vertical-align: middle;
 }
-.tx-desc { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tx-desc { white-space: nowrap; }
 .person-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
   font-size: 11px;
-  padding: 2px 7px;
-  border-radius: 10px;
-  font-weight: 500;
+  border-radius: 50%;
+  font-weight: 600;
   background: var(--surface-raised);
   color: var(--text-2);
 }

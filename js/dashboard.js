@@ -70,6 +70,7 @@ export async function loadDashboard() {
   const catEntries = Object.entries(catMap).sort((a,b) => b[1]-a[1]);
 
   // Budget bar card (no KPI cards)
+  const budgetLabel = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(budget);
   const realizadoLine = `<span style="color:var(--expense-fg);font-weight:600">${formatBRL(realizado)}</span><span style="color:var(--text-2)"> realizado</span>`;
   const provisaoLine  = provisao > 0 ? ` <span style="color:var(--text-2)">+</span> <span style="color:var(--text-2);font-weight:500">${formatBRL(provisao)}</span><span style="color:var(--text-2)"> provisão</span>` : '';
   document.getElementById('dash-kpis').innerHTML = `
@@ -81,16 +82,15 @@ export async function loadDashboard() {
       }</span></div>` : ''}
     <div class="budget-bar-card" style="grid-column:span 2">
       <div class="budget-bar-header">
-        <span class="kpi-label">Orçamento Mensal</span>
+        <span class="kpi-label">Orçamento Mensal <span style="color:var(--text-3);font-weight:500">(${budgetLabel})</span></span>
         <span style="font-size:13px;font-weight:600;color:${barColor}">${pctTotal.toFixed(0)}%</span>
       </div>
       <div class="budget-bar-track">
         <div class="budget-bar-seg" style="width:${pctReal}%;background:${barColor}"></div>
         <div class="budget-bar-seg" style="width:${pctProv}%;background:${provColor}"></div>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px;flex-wrap:wrap;gap:4px">
-        <span style="font-size:13px">${realizadoLine}${provisaoLine}</span>
-        <span style="font-size:12px;color:var(--text-2)">${formatBRL(budget)}</span>
+      <div style="margin-top:8px">
+        <span style="font-size:13px;white-space:nowrap">${realizadoLine}${provisaoLine}</span>
       </div>
     </div>`;
   lucide.createIcons();
