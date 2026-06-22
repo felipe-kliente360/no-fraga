@@ -1,7 +1,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #F2F2F7;
+  --bg: #F5F3EE;
   --surface: #FFFFFF;
   --surface-raised: #F2F2F7;
   --surface-elevated: #FFFFFF;
@@ -414,17 +414,17 @@ select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csv
   margin: 0 auto 20px;
 }
 
-/* FCA date + person row — each half exactly 50% */
+/* FCA date + person row — strict 50/50 grid */
 .fca-date-person-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
-  align-items: flex-start;
-  flex-wrap: nowrap;
+  align-items: start;
 }
-.fca-date-person-row > div { flex: 1; min-width: 0; }
-#fca-date { width: 100%; min-width: 0; }
-#fca-person-chips { flex-wrap: nowrap; width: 100%; gap: 4px; }
-#fca-person-chips .chip { flex: 1; text-align: center; min-width: 0; padding-left: 6px; padding-right: 6px; }
+.fca-date-person-row > div { min-width: 0; overflow: hidden; }
+#fca-date { width: 100%; box-sizing: border-box; }
+#fca-person-chips { display: flex; flex-wrap: nowrap; gap: 4px; }
+#fca-person-chips .chip { flex: 1; text-align: center; min-width: 0; padding-left: 6px; padding-right: 6px; overflow: hidden; }
 
 /* FCA category chips – single-row horizontal scroll */
 #fca-cat-chips {
@@ -447,11 +447,12 @@ select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csv
   margin-bottom: 16px;
 }
 
-/* Payment row with inline counter */
-.fca-pay-row { display: flex; gap: 6px; align-items: center; flex-wrap: nowrap; }
+/* Payment chips row */
+.fca-pay-row { display: flex; gap: 6px; align-items: center; }
 .fca-pay-row .chip { flex: 1; text-align: center; }
-.fca-inst-ctrl { display: flex; align-items: center; gap: 6px; margin-left: auto; flex-shrink: 0; }
-.fca-inst-ctrl.disabled { opacity: 0.3; pointer-events: none; }
+/* Installment row — shown only when Crédito is selected */
+.fca-inst-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--surface-raised); border-radius: var(--r-input); }
+.fca-inst-stepper { display: flex; align-items: center; gap: 8px; }
 .inst-step {
   width: 28px; height: 28px;
   border: 1.5px solid var(--separator);

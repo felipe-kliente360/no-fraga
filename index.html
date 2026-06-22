@@ -6,10 +6,10 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Gastinhos">
-  <meta name="theme-color" content="#F2F2F7" media="(prefers-color-scheme: light)">
+  <meta name="apple-mobile-web-app-title" content="No Fraga">
+  <meta name="theme-color" content="#F5F3EE" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#1C1C1E" media="(prefers-color-scheme: dark)">
-  <title>Gastinhos</title>
+  <title>No Fraga</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="apple-touch-icon" href="icon-180.png">
   <link rel="manifest" href="manifest.json">
@@ -26,7 +26,7 @@
   <div id="screen-setup" class="screen hidden">
     <div class="auth-screen">
       <div>
-        <div class="auth-logo">Gastinhos</div>
+        <div class="auth-logo">No Fraga</div>
         <div class="auth-sub">Configure sua conexão com o Supabase para começar.</div>
       </div>
       <div class="form-group">
@@ -46,7 +46,7 @@
   <div id="screen-login" class="screen hidden">
     <div class="auth-screen">
       <div>
-        <div class="auth-logo">Gastinhos</div>
+        <div class="auth-logo">No Fraga</div>
         <div class="auth-sub">Felipe &amp; Teresa</div>
       </div>
       <div class="form-group">
@@ -218,7 +218,7 @@
           <div class="list-group-header">Sobre</div>
           <div class="list-group-body">
             <div class="list-item">
-              <span class="list-item-label">Gastinhos</span>
+              <span class="list-item-label">No Fraga</span>
               <span class="list-item-value text-sm">v1.0</span>
             </div>
             <div class="list-item">
@@ -268,12 +268,15 @@
           <option>Presente/Doação</option><option>Outros</option>
         </select>
         <div class="fca-label">Pagamento</div>
-        <div class="fca-pay-row mb-20" id="fca-pay-chips">
+        <div class="fca-pay-row mb-8" id="fca-pay-chips">
           <button class="chip" data-val="Dinheiro">Dinheiro</button>
           <button class="chip" data-val="Pix">Pix</button>
           <button class="chip" data-val="Débito">Débito</button>
           <button class="chip active" data-val="Crédito">Crédito</button>
-          <div class="fca-inst-ctrl" id="fca-inst-ctrl">
+        </div>
+        <div class="fca-inst-row mb-20" id="fca-inst-ctrl">
+          <span class="fca-label" style="margin-bottom:0">Parcelas</span>
+          <div class="fca-inst-stepper">
             <button class="inst-step" id="fca-inst-minus">−</button>
             <span class="inst-val" id="fca-inst-display">1</span>
             <button class="inst-step" id="fca-inst-plus">+</button>

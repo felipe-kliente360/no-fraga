@@ -84,7 +84,9 @@ function populateCatSelect(order = ALL_CATS) {
 }
 
 function updateInstCtrl() {
-  document.getElementById('fca-inst-ctrl').classList.toggle('disabled', currentPay !== 'Crédito');
+  const isCredit = currentPay === 'Crédito';
+  document.getElementById('fca-inst-ctrl').classList.toggle('hidden', !isCredit);
+  if (!isCredit) { installCount = 1; syncInstDisplay(); }
 }
 
 function syncInstDisplay() {

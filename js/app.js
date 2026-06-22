@@ -79,11 +79,10 @@ function loginScreen() {
 async function appScreen() {
   show('screen-app');
   initDb(sbClient);
-  sbClient.auth.getUser().then(({ data }) => {
-    const email = (data?.user?.email || '').toLowerCase();
-    const p = email.includes('teresa') ? 'Teresa' : email.includes('felipe') ? 'Felipe' : '';
-    if (p) localStorage.setItem('gastinhos_default_person', p);
-  });
+  const { data: ud } = await sbClient.auth.getUser();
+  const email = (ud?.user?.email || '').toLowerCase();
+  const p = email.includes('teresa') ? 'Teresa' : email.includes('felipe') ? 'Felipe' : '';
+  if (p) localStorage.setItem('gastinhos_default_person', p);
   initFCA();
   initDashboard();
   initAnalise();

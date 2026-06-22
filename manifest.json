@@ -1,12 +1,12 @@
 {
-  "name": "Gastinhos",
-  "short_name": "Gastinhos",
+  "name": "No Fraga",
+  "short_name": "No Fraga",
   "description": "Controle de gastos do casal",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#F2F2F7",
+  "background_color": "#F5F3EE",
   "theme_color": "#6366F1",
   "icons": [
     { "src": "icon-180.png", "sizes": "180x180", "type": "image/png" },
