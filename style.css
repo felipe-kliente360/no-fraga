@@ -413,13 +413,17 @@ select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csv
   margin: 0 auto 20px;
 }
 
-/* FCA date + person row */
+/* FCA date + person row — each half exactly 50% */
 .fca-date-person-row {
   display: flex;
   gap: 12px;
   align-items: flex-end;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
+.fca-date-person-row > div { flex: 1; min-width: 0; }
+#fca-date { width: 100%; min-width: 0; }
+#fca-person-chips { flex-wrap: nowrap; }
+#fca-person-chips .chip { flex: 1; text-align: center; }
 
 /* FCA category chips – single-row horizontal scroll */
 #fca-cat-chips {
@@ -443,8 +447,9 @@ select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csv
 }
 
 /* Payment row with inline counter */
-.fca-pay-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
-.fca-inst-ctrl { display: flex; align-items: center; gap: 6px; margin-left: 4px; }
+.fca-pay-row { display: flex; gap: 6px; align-items: center; flex-wrap: nowrap; }
+.fca-pay-row .chip { flex: 1; text-align: center; }
+.fca-inst-ctrl { display: flex; align-items: center; gap: 6px; margin-left: auto; flex-shrink: 0; }
 .fca-inst-ctrl.disabled { opacity: 0.3; pointer-events: none; }
 .inst-step {
   width: 28px; height: 28px;
