@@ -156,15 +156,19 @@
           </div>
           <button id="hist-apply" class="btn btn-primary" style="height:44px;font-size:14px">Aplicar</button>
         </div>
-        <input id="hist-search" class="input mb-8" type="search" inputmode="search" autocomplete="off" autocapitalize="none" placeholder="Buscar — descrição, categoria, pessoa…">
+        <div class="hist-search-wrap mb-8">
+          <i data-lucide="search" class="hist-search-icon"></i>
+          <input id="hist-search" class="input" type="search" inputmode="search" autocomplete="off" autocapitalize="none" placeholder="Buscar em descrição, categoria…">
+        </div>
         <div class="hist-table-wrap">
           <table class="hist-table">
             <thead>
               <tr>
                 <th data-col="date">Data</th>
+                <th data-col="category">Categoria</th>
+                <th data-col="amount" style="text-align:right">Valor</th>
                 <th data-col="description">Descrição</th>
                 <th data-col="person" style="text-align:center">P</th>
-                <th data-col="amount" style="text-align:right">Valor</th>
                 <th style="width:32px"></th>
               </tr>
             </thead>

@@ -100,9 +100,10 @@ function renderTable() {
   tbody.innerHTML = sorted.map(r => `
     <tr data-id="${r.id}" class="tx-row${r.status === 'provisao' ? ' tx-provisao' : ''}">
       <td>${formatDate(r.date)}</td>
-      <td><span class="tx-desc">${r.description || r.category || '—'}</span>${r.installment_total ? `<span class="inst-badge">${r.installment_current}/${r.installment_total}</span>` : ''}${r.status === 'provisao' ? '<span class="provisao-badge">Prov</span>' : ''}</td>
-      <td style="text-align:center"><span class="person-pill" title="${r.person}">${(r.person || '')[0] || ''}</span></td>
+      <td>${r.category || '—'}</td>
       <td style="text-align:right"><span class="tx-amount ${r.status === 'provisao' ? 'provisao-val' : 'expense'}">${formatBRL(r.amount)}</span></td>
+      <td><span class="tx-desc">${r.description || '—'}</span>${r.installment_total ? `<span class="inst-badge">${r.installment_current}/${r.installment_total}</span>` : ''}${r.status === 'provisao' ? '<span class="provisao-badge">Prov</span>' : ''}</td>
+      <td style="text-align:center"><span class="person-pill" title="${r.person}">${(r.person || '')[0] || ''}</span></td>
       <td><button class="row-dots-btn" data-id="${r.id}" data-group="${r.installment_group_id || ''}" data-date="${r.date}">⋮</button></td>
     </tr>
   `).join('');
