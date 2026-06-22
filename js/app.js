@@ -81,8 +81,12 @@ async function appScreen() {
   initDb(sbClient);
   const { data: ud } = await sbClient.auth.getUser();
   const email = (ud?.user?.email || '').toLowerCase();
-  const p = email.includes('teresa') ? 'Teresa' : email.includes('felipe') ? 'Felipe' : '';
-  if (p) localStorage.setItem('gastinhos_default_person', p);
+  // Identity is sticky: once chosen (auto from email or manually in Ajustes) it
+  // persists. Only derive a value on first run so the "Eu" chip always resolves.
+  if (!localStorage.getItem('gastinhos_default_person')) {
+    const p = email.includes('teresa') ? 'Teresa' : email.includes('felipe') ? 'Felipe' : 'Felipe';
+    localStorage.setItem('gastinhos_default_person', p);
+  }
   initFCA();
   initDashboard();
   initAnalise();

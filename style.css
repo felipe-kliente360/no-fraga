@@ -449,7 +449,8 @@ select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csv
 
 /* Payment row with inline installment counter */
 .fca-pay-row { display: flex; gap: 6px; align-items: center; flex-wrap: nowrap; }
-.fca-pay-row .chip { flex: 1; text-align: center; min-width: 0; padding-left: 8px; padding-right: 8px; }
+.fca-pay-row .chip { flex: 1; height: 44px; display: flex; align-items: center; justify-content: center; text-align: center; min-width: 0; padding-left: 8px; padding-right: 8px; }
+.fca-pay-row .chip[data-val="Pix"] { flex: 0.6; }
 .fca-inst-ctrl { display: flex; align-items: center; gap: 6px; margin-left: auto; flex-shrink: 0; }
 .fca-inst-ctrl.disabled { opacity: 0.3; pointer-events: none; }
 .inst-step {
