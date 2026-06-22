@@ -422,9 +422,9 @@ select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csv
   align-items: start;
 }
 .fca-date-person-row > div { min-width: 0; overflow: hidden; }
-#fca-date { width: 100%; box-sizing: border-box; }
-#fca-person-chips { display: flex; flex-wrap: nowrap; gap: 4px; }
-#fca-person-chips .chip { flex: 1; text-align: center; min-width: 0; padding-left: 6px; padding-right: 6px; overflow: hidden; }
+#fca-date { width: 100%; box-sizing: border-box; height: 44px; }
+#fca-person-chips { display: flex; flex-wrap: nowrap; gap: 6px; }
+#fca-person-chips .chip { flex: 1; height: 44px; display: flex; align-items: center; justify-content: center; text-align: center; min-width: 0; padding-left: 4px; padding-right: 4px; overflow: hidden; }
 
 /* FCA category chips – single-row horizontal scroll */
 #fca-cat-chips {
@@ -447,12 +447,11 @@ select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csv
   margin-bottom: 16px;
 }
 
-/* Payment chips row */
-.fca-pay-row { display: flex; gap: 6px; align-items: center; }
-.fca-pay-row .chip { flex: 1; text-align: center; }
-/* Installment row — shown only when Crédito is selected */
-.fca-inst-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--surface-raised); border-radius: var(--r-input); }
-.fca-inst-stepper { display: flex; align-items: center; gap: 8px; }
+/* Payment row with inline installment counter */
+.fca-pay-row { display: flex; gap: 6px; align-items: center; flex-wrap: nowrap; }
+.fca-pay-row .chip { flex: 1; text-align: center; min-width: 0; padding-left: 8px; padding-right: 8px; }
+.fca-inst-ctrl { display: flex; align-items: center; gap: 6px; margin-left: auto; flex-shrink: 0; }
+.fca-inst-ctrl.disabled { opacity: 0.3; pointer-events: none; }
 .inst-step {
   width: 28px; height: 28px;
   border: 1.5px solid var(--separator);
@@ -471,6 +470,9 @@ select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csv
 
 /* Smaller input variant */
 .input-sm { padding: 8px 10px; font-size: 16px; }
+
+/* FCA description height matches date/category/person inputs */
+#fca-description { height: 44px; }
 
 /* FCA amount */
 .fca-amount-wrap {
@@ -511,7 +513,7 @@ select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csv
 
 /* FCA category select */
 #fca-cat-select {
-  height: 46px;
+  height: 44px;
   font-size: 15px;
   font-weight: 500;
   appearance: none;

@@ -85,8 +85,8 @@ function populateCatSelect(order = ALL_CATS) {
 
 function updateInstCtrl() {
   const isCredit = currentPay === 'Crédito';
-  document.getElementById('fca-inst-ctrl').classList.toggle('hidden', !isCredit);
-  if (!isCredit) { installCount = 1; syncInstDisplay(); }
+  document.getElementById('fca-inst-ctrl').classList.toggle('disabled', !isCredit);
+  if (!isCredit && installCount !== 1) { installCount = 1; syncInstDisplay(); }
 }
 
 function syncInstDisplay() {
