@@ -64,14 +64,21 @@ function setupScreen() {
   });
 }
 
+// Supabase Auth is email-based, so usernames map to synthetic emails.
+// Create the two users in Supabase with these exact addresses (auto-confirmed):
+//   felipe@nofraga.app  /  teresa@nofraga.app
+const LOGIN_DOMAIN = '@nofraga.app';
+
 function loginScreen() {
   show('screen-login');
   document.getElementById('login-submit').addEventListener('click', async () => {
-    const email = document.getElementById('login-email').value.trim();
+    const user = document.getElementById('login-user').value.trim().toLowerCase();
     const pass = document.getElementById('login-password').value;
     const err = document.getElementById('login-error');
+    if (!user) { err.textContent = 'Informe o usuário'; err.classList.add('visible'); return; }
+    const email = user.includes('@') ? user : user + LOGIN_DOMAIN;
     const { error } = await sbClient.auth.signInWithPassword({ email, password: pass });
-    if (error) { err.textContent = error.message; err.classList.add('visible'); return; }
+    if (error) { err.textContent = 'Usuário ou senha inválidos'; err.classList.add('visible'); return; }
     appScreen();
   });
 }
@@ -81,12 +88,12 @@ async function appScreen() {
   initDb(sbClient);
   const { data: ud } = await sbClient.auth.getUser();
   const email = (ud?.user?.email || '').toLowerCase();
-  // Identity is sticky: once chosen (auto from email or manually in Ajustes) it
-  // persists. Only derive a value on first run so the "Eu" chip always resolves.
-  if (!localStorage.getItem('gastinhos_default_person')) {
-    const p = email.includes('teresa') ? 'Teresa' : email.includes('felipe') ? 'Felipe' : 'Felipe';
-    localStorage.setItem('gastinhos_default_person', p);
-  }
+  // Username login means the account identifies the person reliably, so the
+  // identity follows whoever logged in. Falls back to the saved/default value
+  // only when the login can't be resolved, so the "Eu" chip always works.
+  const detected = email.includes('teresa') ? 'Teresa' : email.includes('felipe') ? 'Felipe' : '';
+  if (detected) localStorage.setItem('gastinhos_default_person', detected);
+  else if (!localStorage.getItem('gastinhos_default_person')) localStorage.setItem('gastinhos_default_person', 'Felipe');
   initFCA();
   initDashboard();
   initAnalise();
