@@ -8,7 +8,7 @@ create table if not exists transactions (
   category text,
   person text not null check (person in ('Felipe', 'Teresa', 'Casal')),
   description text,
-  payment_method text check (payment_method in ('Pix', 'Boleto', 'Débito', 'Crédito', 'Dinheiro')),
+  payment_method text check (payment_method in ('Pix', 'Boleto', 'Débito', 'Crédito')),
   installment_current integer,
   installment_total integer,
   installment_group_id uuid,
