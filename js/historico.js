@@ -14,6 +14,30 @@ let searchTerm = '';
 export function setHistoricoPerson(p) { filterPerson = p; }
 export function getHistoricoPerson() { return filterPerson; }
 
+export function getActiveFilterCount() {
+  return filterCat.size + filterPay.size + (searchTerm.trim() ? 1 : 0);
+}
+
+export function clearHistoricoFilters() {
+  filterCat = new Set();
+  filterPay = new Set();
+  searchTerm = '';
+  document.querySelectorAll('#hist-cat-chips .chip.active, #hist-pay-chips .chip.active')
+    .forEach(c => c.classList.remove('active'));
+  const s = document.getElementById('hist-search');
+  if (s) s.value = '';
+  renderTable();
+}
+
+function updateFilterBadge() {
+  const btn = document.getElementById('hist-clear-btn');
+  if (!btn) return;
+  const n = getActiveFilterCount();
+  btn.classList.toggle('hidden', n === 0);
+  const cnt = btn.querySelector('.hist-clear-count');
+  if (cnt) cnt.textContent = n;
+}
+
 export function initHistorico() {
   const now = new Date();
   const ym = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
@@ -83,6 +107,7 @@ function renderTable() {
   // Realtime summary of what's being shown
   document.getElementById('hist-count').textContent = filtered.length;
   document.getElementById('hist-total').textContent = formatBRL(filtered.reduce((s, r) => s + Number(r.amount), 0));
+  updateFilterBadge();
 
   const sorted = filtered.sort((a, b) => {
     let va = a[sortCol], vb = b[sortCol];

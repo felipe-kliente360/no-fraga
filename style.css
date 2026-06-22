@@ -260,6 +260,18 @@ html, body {
   padding: 8px;
 }
 .btn-ghost svg { width: 20px; height: 20px; stroke-width: 1.75; }
+#hist-clear-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  width: auto;
+  padding: 5px 10px 5px 8px;
+  background: var(--accent-soft);
+  color: var(--accent-fg);
+  border-radius: 999px;
+}
+#hist-clear-btn svg { width: 15px; height: 15px; }
+.hist-clear-count { font-size: 12px; font-weight: 700; line-height: 1; }
 .btn-icon {
   background: var(--surface-raised);
   border-radius: 50%;

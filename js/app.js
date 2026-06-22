@@ -2,7 +2,7 @@ import { getConfig, saveConfig, clearConfig } from './config.js';
 import { initFCA } from './fca.js';
 import { initDashboard, loadDashboard } from './dashboard.js';
 import { initAnalise, loadAnalise, setAnalisePerson, getAnalisePerson } from './analise.js';
-import { initHistorico, loadHistorico, setHistoricoPerson, getHistoricoPerson } from './historico.js';
+import { initHistorico, loadHistorico, setHistoricoPerson, getHistoricoPerson, clearHistoricoFilters } from './historico.js';
 import { initAjustes, applyTheme, applyAccent } from './ajustes.js';
 import { init as initDb } from './db.js';
 
@@ -172,11 +172,14 @@ function setupTabs() {
         });
         loadAnalise();
       } else if (tab === 'historico') {
-        ctrl.innerHTML = `<button class="btn btn-ghost" id="hist-filter-toggle"><i data-lucide="sliders-horizontal"></i></button>` +
+        ctrl.innerHTML =
+          `<button class="btn btn-ghost hidden" id="hist-clear-btn" aria-label="Limpar filtros"><i data-lucide="x"></i><span class="hist-clear-count">0</span></button>` +
+          `<button class="btn btn-ghost" id="hist-filter-toggle"><i data-lucide="sliders-horizontal"></i></button>` +
           buildPersonFilter(getHistoricoPerson(), 'hist-person-btn', 'hist-person-popover');
         lucide.createIcons();
         document.getElementById('hist-filter-toggle').addEventListener('click', () =>
           document.getElementById('hist-filter-bar').classList.toggle('open'));
+        document.getElementById('hist-clear-btn').addEventListener('click', clearHistoricoFilters);
         setupPersonPopover('hist-person-popover', 'hist-person-btn', (p) => {
           setHistoricoPerson(p);
           loadHistorico();
